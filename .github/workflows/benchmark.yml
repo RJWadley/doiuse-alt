@@ -5,7 +5,6 @@ on: pull_request
 jobs:
   benchmark:
     runs-on: ubuntu-latest
-
     env:
       PR_TIME: ""
       BASE_TIME: ""
