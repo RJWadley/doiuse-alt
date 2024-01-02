@@ -23,8 +23,7 @@ jobs:
       - name: Run benchmark on PR branch
         id: pr_benchmark
         run: |
-          PR_TIME=$(\time -f '%e' node ./benchmarks/run.js)
-          echo "PR_TIME=${PR_TIME}" >> $GITHUB_ENV
+          echo "PR_TIME=(\time -f '%e' node ./benchmarks/run.js)" >> $GITHUB_ENV
 
       - name: Checkout base branch
         uses: actions/checkout@v4
@@ -40,15 +39,12 @@ jobs:
       - name: Run benchmark on base branch
         id: base_benchmark
         run: |
-          cd benchmarks
-          BASE_TIME=$(\time -f '%e' node ./benchmarks/run.js)
-          echo "BASE_TIME=${BASE_TIME}" >> $GITHUB_ENV
+          echo "BASE_TIME=(\time -f '%e' node ./benchmarks/run.js)" >> $GITHUB_ENV
 
       - name: Calculate percent change
         id: percent_change
         run: |
-          percent_change=$(echo "scale=2; ((${PR_TIME}s - ${BASE_TIME}s) / ${BASE_TIME}s) * 100" | bc)
-          echo "PERCENT_CHANGE=${percent_change}" >> $GITHUB_ENV
+          echo "PERCENT_CHANGE=$(echo "scale=2; (${PR_TIME} - ${BASE_TIME}) / ${BASE_TIME} * 100" | bc)" >> $GITHUB_ENV
 
       - name: Log benchmark results
         run: |
