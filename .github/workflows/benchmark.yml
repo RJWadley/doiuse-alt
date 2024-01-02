@@ -57,12 +57,11 @@ jobs:
       - name: Find Comment
         if: github.event_name == 'pull_request'
         uses: peter-evans/find-comment@v2
-        id: find_comment
+        id: fc
         with:
           issue-number: ${{ github.event.pull_request.number }}
           comment-author: "github-actions[bot]"
-          body-includes: "Benchmark Results"
-
+          body-includes: Benchmark Results
       - name: Comment on PR with benchmark results
         uses: peter-evans/create-or-update-comment@v2
         with:
@@ -73,5 +72,5 @@ jobs:
 
             | Benchmark     | PR Branch Time | Base Branch Time | Percent Change |
             |---------------|-----------------|------------------|----------------|
-            | Total Time    | ${PR_TIME}s | ${BASE_TIME}s | ${PERCENT_CHANGE}% |            edit-mode: replace
+            | Total Time    | ${PR_TIME}s | ${BASE_TIME}s | ${PERCENT_CHANGE}% |
           edit-mode: replace
