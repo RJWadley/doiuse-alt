@@ -27,20 +27,22 @@ jobs:
       - name: Run benchmark on PR branch
         id: pr_benchmark
         run: |
-          PR_TIME=$(time ./benchmarks/run.js |& grep real | awk '{print $2}')
+          PR_TIME=$(time node ./benchmarks/run.js |& grep real | awk '{print $2}')
           echo "PR_TIME=${PR_TIME}" >> $GITHUB_ENV
 
-      - name: Checkout base branch and benchmark folder
+      - name: Checkout base branch
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.base.ref }}
-          path: benchmarks
+
+      - name: Checkout head benchmarks
+        run: git checkout ${{ github.event.pull_request.head.ref }} -- benchmarks
 
       - name: Run benchmark on base branch
         id: base_benchmark
         run: |
           cd benchmarks
-          BASE_TIME=$(time ../benchmarks/run.js |& grep real | awk '{print $2}')
+          BASE_TIME=$(time node ../benchmarks/run.js |& grep real | awk '{print $2}')
           echo "BASE_TIME=${BASE_TIME}" >> $GITHUB_ENV
 
       - name: Calculate percent change
@@ -59,16 +61,14 @@ jobs:
           body-includes: "Benchmark Results"
 
       - name: Comment on PR with benchmark results
-        if: github.event_name == 'pull_request'
         uses: peter-evans/create-or-update-comment@v2
         with:
-          comment-id: ${{ steps.find_comment.outputs.comment-id }}
+          comment-id: ${{ steps.fc.outputs.comment-id }}
           issue-number: ${{ github.event.pull_request.number }}
           body: |
             ## Benchmark Results
 
             | Benchmark     | PR Branch Time | Base Branch Time | Percent Change |
             |---------------|-----------------|------------------|----------------|
-            | Total Time    | ${PR_TIME}s | ${BASE_TIME}s | ${PERCENT_CHANGE}% |
-
+            | Total Time    | ${PR_TIME}s | ${BASE_TIME}s | ${PERCENT_CHANGE}% |            edit-mode: replace
           edit-mode: replace
