@@ -5,10 +5,6 @@ on: pull_request
 jobs:
   benchmark:
     runs-on: ubuntu-latest
-    env:
-      PR_TIME: ""
-      BASE_TIME: ""
-      PERCENT_CHANGE: ""
 
     steps:
       - name: Checkout PR branch
@@ -27,7 +23,7 @@ jobs:
       - name: Run benchmark on PR branch
         id: pr_benchmark
         run: |
-          PR_TIME=$(time node ./benchmarks/run.js |& grep real | awk '{print $2}')
+          PR_TIME=$(\time -f '%e' node ./benchmarks/run.js)
           echo "PR_TIME=${PR_TIME}" >> $GITHUB_ENV
 
       - name: Checkout base branch
@@ -45,7 +41,7 @@ jobs:
         id: base_benchmark
         run: |
           cd benchmarks
-          BASE_TIME=$(time node ../benchmarks/run.js |& grep real | awk '{print $2}')
+          BASE_TIME=$(\time -f '%e' node ./benchmarks/run.js)
           echo "BASE_TIME=${BASE_TIME}" >> $GITHUB_ENV
 
       - name: Calculate percent change
@@ -53,6 +49,12 @@ jobs:
         run: |
           percent_change=$(echo "scale=2; ((${PR_TIME}s - ${BASE_TIME}s) / ${BASE_TIME}s) * 100" | bc)
           echo "PERCENT_CHANGE=${percent_change}" >> $GITHUB_ENV
+
+      - name: Log benchmark results
+        run: |
+          echo "PR_TIME=${PR_TIME}"
+          echo "BASE_TIME=${BASE_TIME}"
+          echo "PERCENT_CHANGE=${PERCENT_CHANGE}"
 
       - name: Find Comment
         if: github.event_name == 'pull_request'
