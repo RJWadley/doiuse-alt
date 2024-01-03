@@ -2,6 +2,12 @@ import postcss from "postcss";
 import DoIUse from "../lib/DoIUse.js";
 import fs from "fs";
 
+// disable all console output
+var methods = ["log", "debug", "warn", "info"];
+for (var i = 0; i < methods.length; i++) {
+  console[methods[i]] = function () {};
+}
+
 const main = async () => {
   const start = performance.now();
 

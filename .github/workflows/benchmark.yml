@@ -23,7 +23,12 @@ jobs:
       - name: Run benchmark on PR branch
         id: pr_benchmark
         run: |
-          time node ./benchmarks/run.js &> /dev/null
+          PR_START_TIME=$(date +%s)
+          node ./benchmarks/run.js
+          PR_END_TIME=$(date +%s)
+          PR_DURATION=$((PR_END_TIME - PR_START_TIME))
+          echo 'Finished benchmarking, Start time: ${PR_START_TIME}, End time: ${PR_END_TIME}, Duration: ${PR_DURATION} seconds'
+          echo "PR_TIME=${PR_DURATION}" >> $GITHUB_ENV
 
       - name: Checkout base branch
         uses: actions/checkout@v4
@@ -39,15 +44,20 @@ jobs:
       - name: Run benchmark on base branch
         id: base_benchmark
         run: |
-          time node ./benchmarks/run.js &> /dev/null
+          BASE_START_TIME=$(date +%s)
+          node ./benchmarks/run.js
+          BASE_END_TIME=$(date +%s)
+          BASE_DURATION=$((BASE_END_TIME - BASE_START_TIME))
+          echo 'Finished benchmarking, Start time: ${BASE_START_TIME}, End time: ${BASE_END_TIME}, Duration: ${BASE_DURATION} seconds'
+          echo "BASE_TIME=${BASE_DURATION}" >> $GITHUB_ENV
 
       - name: Calculate percent change
         id: percent_change
         run: |
-          echo "PERCENT_CHANGE=$(echo "scale=2; (${PR_TIME} - ${BASE_TIME}) / ${BASE_TIME} * 100" | bc)" >> $GITHUB_ENV
+          echo "PERCENT_CHANGE=$(echo "scale=2; (${PR_DURATION} - ${BASE_DURATION}) / ${BASE_DURATION} * 100" | bc)" >> $GITHUB_ENV
 
       - name: Log benchmark results
         run: |
-          echo "Time on pull branch: ${PR_TIME}"
-          echo "Time on base branch: ${BASE_TIME}"
+          echo "Time on pull branch: ${PR_DURATION} seconds"
+          echo "Time on base branch: ${BASE_DURATION} seconds"
           echo "Time changed by ${PERCENT_CHANGE} percent"
