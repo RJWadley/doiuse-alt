@@ -2,6 +2,12 @@ import postcss from "postcss";
 import DoIUse from "../lib/DoIUse.js";
 import fs from "fs";
 
+// disable all console output
+var methods = ["log", "debug", "warn", "info"];
+for (var i = 0; i < methods.length; i++) {
+  console[methods[i]] = function () {};
+}
+
 const main = async () => {
   const start = performance.now();
 
@@ -13,11 +19,6 @@ const main = async () => {
     await postcss(
       new DoIUse({
         browsers: ["ie >= 6", "> 1%"],
-        ignore: ["rem"], // an optional array of features to ignore
-        ignoreFiles: ["**/normalize.css"], // an optional array of file globs to match against original source file path, to ignore
-        onFeatureUsage: (usageInfo) => {
-          console.log(usageInfo.message);
-        },
       })
     ).process(
       fs.readFileSync(new URL(`./data/${file}`, import.meta.url), "utf8")
