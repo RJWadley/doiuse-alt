@@ -19,11 +19,6 @@ const main = async () => {
     await postcss(
       new DoIUse({
         browsers: ["ie >= 6", "> 1%"],
-        ignore: ["rem"], // an optional array of features to ignore
-        ignoreFiles: ["**/normalize.css"], // an optional array of file globs to match against original source file path, to ignore
-        onFeatureUsage: (usageInfo) => {
-          console.log(usageInfo.message);
-        },
       })
     ).process(
       fs.readFileSync(new URL(`./data/${file}`, import.meta.url), "utf8")
