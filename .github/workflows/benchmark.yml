@@ -23,7 +23,7 @@ jobs:
       - name: Run benchmark on PR branch
         id: pr_benchmark
         run: |
-          echo "PR_TIME=$(\time -f '%e' node ./benchmarks/run.js &> /dev/null)" >> $GITHUB_ENV
+          \time -f '%e' node ./benchmarks/run.js &> /dev/null
 
       - name: Checkout base branch
         uses: actions/checkout@v4
@@ -39,7 +39,7 @@ jobs:
       - name: Run benchmark on base branch
         id: base_benchmark
         run: |
-          echo "BASE_TIME=$(\time -f '%e' node ./benchmarks/run.js &> /dev/null)" >> $GITHUB_ENV
+          \time -f '%e' node ./benchmarks/run.js &> /dev/null
 
       - name: Calculate percent change
         id: percent_change
