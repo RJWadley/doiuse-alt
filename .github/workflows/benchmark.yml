@@ -27,7 +27,7 @@ jobs:
           node ./benchmarks/run.js
           PR_END_TIME=$(date +%s)
           PR_DURATION=$((PR_END_TIME - PR_START_TIME))
-          echo 'Finished benchmarking, Start time: ${PR_START_TIME}, End time: ${PR_END_TIME}, Duration: ${PR_DURATION} seconds'
+          echo 'Finished benchmarking, Start time: $PR_START_TIME, End time: $PR_END_TIME, Duration: $PR_DURATION seconds'
           echo "PR_TIME=${PR_DURATION}" >> $GITHUB_ENV
 
       - name: Checkout base branch
@@ -48,7 +48,7 @@ jobs:
           node ./benchmarks/run.js
           BASE_END_TIME=$(date +%s)
           BASE_DURATION=$((BASE_END_TIME - BASE_START_TIME))
-          echo 'Finished benchmarking, Start time: ${BASE_START_TIME}, End time: ${BASE_END_TIME}, Duration: ${BASE_DURATION} seconds'
+          echo 'Finished benchmarking, Start time: $BASE_START_TIME, End time: $BASE_END_TIME, Duration: $BASE_DURATION seconds'
           echo "BASE_TIME=${BASE_DURATION}" >> $GITHUB_ENV
 
       - name: Calculate percent change
